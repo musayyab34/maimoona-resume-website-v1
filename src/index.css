@@ -1,0 +1,127 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens — §2 of the build plan.
+ * Accent colors are the VESTA/CPK conventions for the atoms of KSnX₃.
+ * "-ink" variants are contrast-corrected for text on dark backgrounds;
+ * the true VESTA values live in scene/lattice/elements.ts for the 3D atoms.
+ */
+@theme {
+  --color-paper: #f2f4f5;
+  --color-graphite: #1a1d21;
+  --color-ink: #22262b;
+  --color-slate: #5a626b;
+  --color-mist: #9aa3ad;
+  --color-potassium: #8f40d4;
+  --color-potassium-ink: #b583ea;
+  --color-tin: #668080;
+  --color-tin-ink: #8fa8a8;
+  --color-chlorine: #1ff01f;
+  --color-chlorine-ink: #3fe03f;
+  --color-bromine: #a62929;
+  --color-bromine-ink: #e06060;
+  --color-fluorine: #90e050;
+  --color-fluorine-ink: #a8e070;
+
+  --font-display: 'Zodiak', 'Georgia', 'Times New Roman', serif;
+  --font-sans: 'Switzer', system-ui, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --font-mono: 'Fragment Mono', ui-monospace, 'Cascadia Mono', 'Menlo', monospace;
+}
+
+html {
+  background-color: var(--color-paper);
+}
+
+body {
+  @apply bg-paper font-sans text-graphite antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-potassium) 25%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-potassium);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+[data-theme='dark'] :focus-visible {
+  outline-color: var(--color-potassium-ink);
+}
+
+sub {
+  font-size: 0.66em;
+  line-height: 0;
+}
+
+sup {
+  font-size: 0.72em;
+  line-height: 0;
+}
+
+/* Scroll-reveal blocks start hidden only in the enhanced (animated) mode;
+   GSAP owns the transition. Static mode never hides content. */
+[data-mode='enhanced'] [data-reveal] {
+  opacity: 0;
+}
+
+/* Hero load-in — CSS only, gated on motion preference */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-rise {
+    animation: hero-rise 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+  .hero-rise-2 {
+    animation: hero-rise 0.9s 0.15s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+  .hero-rise-3 {
+    animation: hero-rise 0.9s 0.3s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+  .scroll-cue {
+    animation: cue-drift 2.6s ease-in-out infinite;
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cue-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(7px);
+  }
+}
+
+/* Variant caption swap in the lattice room */
+.variant-swap {
+  animation: variant-fade 0.45s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .variant-swap {
+    animation: none;
+  }
+}
+
+@keyframes variant-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
