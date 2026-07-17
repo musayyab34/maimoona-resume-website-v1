@@ -21,6 +21,16 @@ export interface LevelFade {
 }
 
 /**
+ * Whether a level owns the frame outright. Crossfading levels must stop
+ * writing depth while they dissolve: a `transparent` material still writes
+ * depth by default, so a level at 3% opacity will happily z-clip the level
+ * it is dissolving into and shear it along its own silhouette.
+ */
+export function isSolid(opacity: number): boolean {
+  return opacity > 0.995
+}
+
+/**
  * Where a level sits relative to the smoothed descent progress. Adjacent
  * levels overlap inside the feather band, producing the crossfade seam.
  */

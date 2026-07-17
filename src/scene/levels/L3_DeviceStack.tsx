@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useScaleStore } from '../../store/scaleStore'
-import { easeInOut, levelFade, smoothstep } from '../utils'
+import { easeInOut, isSolid, levelFade, smoothstep } from '../utils'
 
 const LEVEL = 1
 const W = 3.4
@@ -57,11 +57,17 @@ export function L3_DeviceStack() {
     const totalH =
       LAYERS.reduce((acc, l) => acc + l.h, 0) + gap * (LAYERS.length - 1)
     let cursor = -totalH / 2
+    // Depth only while this level owns the frame. While it dissolves in over
+    // the 10⁰ coupon, a depth-writing layer at 3% opacity would shear the
+    // coupon along its silhouette; renderOrder (bottom-up = back-to-front
+    // from this camera) keeps the layers themselves stacked correctly.
+    const solid = isSolid(opacity)
     LAYERS.forEach((layer, i) => {
       const mesh = meshRefs.current[i]
       if (mesh) mesh.position.y = cursor + layer.h / 2
       cursor += layer.h + gap
       materials[i].opacity = opacity * layer.opacity
+      materials[i].depthWrite = solid && layer.opacity > 0.99
     })
   })
 
@@ -74,6 +80,7 @@ export function L3_DeviceStack() {
             meshRefs.current[i] = el
           }}
           material={materials[i]}
+          renderOrder={i}
         >
           <boxGeometry args={[W, layer.h, D]} />
         </mesh>
